@@ -12,5 +12,9 @@ export async function createRepository(config = process.env) {
     const { createOracleRepository } = await import('./oracle.js');
     return createOracleRepository(config);
   }
+  if (adapter === 'postgres') {
+    const { createPostgresRepository } = await import('./postgres.js');
+    return createPostgresRepository(config);
+  }
   throw new Error(`Adaptador desconocido: ${adapter}`);
 }

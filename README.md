@@ -1,6 +1,6 @@
 # MP Dashboard Cliente · Bellia
 
-Dashboard de control de calidad para Bellia, construido con React, Express y SQLite u Oracle. Usa una base propia y no modifica la base del dashboard anterior. Conserva el acceso de administrador y visualizador: solo el administrador puede importar Excel y gestionar visualizadores.
+Dashboard de control de calidad para Bellia, construido con React, Express y SQLite, Oracle o Postgres. Usa una base propia y no modifica la base del dashboard anterior. Conserva el acceso de administrador y visualizador: solo el administrador puede importar Excel y gestionar visualizadores.
 
 ## Iniciar
 
@@ -27,6 +27,10 @@ Configura `BELLIA_SQLITE_PATH` con esa misma ruta. El script solo crea la estruc
 ## Script de estructura Oracle
 
 [El esquema Oracle](server/db/schema.oracle.sql) crea las mismas entidades de Bellia en un **esquema Oracle nuevo y vacío**. Debe ejecutarlo el responsable de Oracle antes de iniciar la aplicación; no migra la estructura antigua. Configura `DATABASE_ADAPTER=oracle`, `ORACLE_USER`, `ORACLE_PASSWORD` y `ORACLE_CONNECT_STRING`, luego ejecuta `npm run seed` para crear el administrador. Oracle no genera sus tablas automáticamente al arrancar.
+
+## Script de estructura Postgres
+
+[El esquema Postgres](server/db/schema.postgres.sql) crea las mismas entidades de Bellia en un **esquema Postgres nuevo y vacío**. Debe ejecutarlo el responsable de la base antes de iniciar la aplicación; no migra la estructura antigua. Configura `DATABASE_ADAPTER=postgres` y `DATABASE_URL` (o `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DATABASE`, `POSTGRES_USER` y `POSTGRES_PASSWORD`), luego ejecuta `npm run seed` para crear el administrador. Postgres no genera sus tablas automáticamente al arrancar.
 
 ## Reglas del dashboard
 
@@ -59,7 +63,7 @@ Los filtros `Desde` y `Hasta` establecen un rango inclusivo. `Solo día` fija am
 
 `POST /api/uploads` requiere administrador y el archivo binario con `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Devuelve `recordCount`, `detailCount` y `warningDates`. Sin sesión responde 401; sin permiso, 403; entrada inválida, 400; duplicado, 409. La carga de ambas hojas se guarda en una sola transacción.
 
-Los adaptadores SQLite y Oracle usan el mismo modelo Bellia y exponen las mismas rutas. Las jornadas y el detalle se importan juntos en una transacción.
+Los adaptadores SQLite, Oracle y Postgres usan el mismo modelo Bellia y exponen las mismas rutas. Las jornadas y el detalle se importan juntos en una transacción.
 
 ## Verificación
 
