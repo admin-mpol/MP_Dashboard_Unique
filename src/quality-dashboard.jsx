@@ -139,7 +139,9 @@ function TargetHero({ inspected, required, percentage, met, total, from, to }) {
         <div className={`target-hero-track ${percentage >= 100 ? 'is-met' : ''}`} aria-hidden="true">
           <span style={{ width: `${Math.min(percentage, 100)}%` }} />
         </div>
-        <small>{met} de {total} jornadas cumplieron su meta</small>
+
+       {/* Linea comentada*/}
+       {/* <small>{met} de {total} jornadas cumplieron su meta</small> */}
       </div>
     </section>
   );

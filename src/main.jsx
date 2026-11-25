@@ -344,7 +344,7 @@ function Login({ onLogin }) {
         </div>
         <div className="visual-foot">
           © {new Date().getFullYear()}
-          <span>Manpower Logistic · Control en cada dato</span>
+          <span>MP Outsourcing Logistico · Control en cada dato</span>
         </div>
       </div>
       <div className="login-side">
