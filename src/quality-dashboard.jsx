@@ -140,6 +140,7 @@ function DailyChart({ daily }) {
           <XAxis dataKey="date" tickFormatter={fullDate} />
           <YAxis allowDecimals={false} />
           <Tooltip formatter={value => `${fmt.format(value)} cajas`} labelFormatter={fullDate} />
+           <Bar dataKey="required" name="Requeridas" stackId="required" fill="#7a8494" />
           <Bar dataKey="approved" name="Aprobadas" stackId="boxes" fill="#29936e" />
           <Bar dataKey="blocked" name="Bloqueadas" stackId="boxes" fill="#df9653" />
         </BarChart>
