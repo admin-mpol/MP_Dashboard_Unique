@@ -37,7 +37,7 @@ Configura `BELLIA_SQLITE_PATH` con esa misma ruta. El script solo crea la estruc
 - Una jornada es una combinación única de fecha y mesa. `Personal Operativo` es una cantidad por jornada, no identifica personas.
 - Cajas inspeccionadas = cajas aprobadas + cajas bloqueadas. Sets totales = cajas inspeccionadas × 2. La vista muestra el total de sets, sin desglose de sets aprobados y bloqueados.
 - Una mesa cumple la meta cuando inspecciona al menos 50 cajas por cada operario asignado a esa jornada, aunque registre más de 8 horas. El cumplimiento del periodo es cajas inspeccionadas ÷ cajas requeridas × 100; puede superar el 100 %. La productividad es cajas inspeccionadas ÷ horas de mesa; el personal operativo no modifica ese divisor.
-- El detalle distribuye los sets bloqueados por fecha, pieza y una sola causa: origen (proveedor) o no origen (transporte o manipulación). No identifica la mesa. Si la suma diaria del detalle difiere de cajas bloqueadas × 2, se avisa sin rechazar la carga.
+- El detalle distribuye los sets bloqueados por fecha, pieza y una sola causa: origen (proveedor) o no origen (transporte o manipulación). No identifica la mesa ni se compara con las cajas bloqueadas: es un registro independiente.
 
 ## Importar Excel
 
@@ -61,7 +61,7 @@ Las cajas deben ser enteros no negativos y cada jornada debe tener al menos un o
 
 Los filtros `Desde` y `Hasta` establecen un rango inclusivo. `Solo día` fija ambas fechas a la elegida; al borrar ese valor se restablecen los últimos 30 días.
 
-`POST /api/uploads` requiere administrador y el archivo binario con `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Devuelve `recordCount`, `detailCount` y `warningDates`. Sin sesión responde 401; sin permiso, 403; entrada inválida, 400; duplicado, 409. La carga de ambas hojas se guarda en una sola transacción.
+`POST /api/uploads` requiere administrador y el archivo binario con `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Devuelve `recordCount` y `detailCount`. Sin sesión responde 401; sin permiso, 403; entrada inválida, 400; duplicado, 409. La carga de ambas hojas se guarda en una sola transacción.
 
 Los adaptadores SQLite, Oracle y Postgres usan el mismo modelo Bellia y exponen las mismas rutas. Las jornadas y el detalle se importan juntos en una transacción.
 

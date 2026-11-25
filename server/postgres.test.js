@@ -82,7 +82,6 @@ test('Postgres usa el modelo Bellia y guarda ambas hojas en una transacción', a
     assert.equal(dashboard.summary.inspected, 255);
     assert.equal(dashboard.summary.required, 500);
     assert.equal(dashboard.defects.total, 40);
-    assert.deepEqual(dashboard.defects.warnings, []);
     const oneDay = await repo.listQualityRecords('2026-11-18', '2026-11-18');
     assert.equal(oneDay.length, 2);
     const mesaDos = buildDashboard(records, details, { table: 'Mesa 2' });

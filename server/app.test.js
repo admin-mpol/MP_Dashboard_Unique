@@ -142,7 +142,7 @@ test('Excel Bellia llega a indicadores; sesión, permisos, filtros y duplicados'
     assert.equal((await upload(request, admin, Buffer.from('invalid'))).status, 400);
     const added = await upload(request, admin, xlsx);
     assert.equal(added.status, 201);
-    assert.deepEqual(await added.json(), { recordCount: 3, detailCount: 3, warningDates: [] });
+    assert.deepEqual(await added.json(), { recordCount: 3, detailCount: 3 });
     const full = await dashboard(request, viewer, query);
     assert.equal(full.summary.inspected, 255);
     assert.equal(full.summary.required, 500);
@@ -153,7 +153,6 @@ test('Excel Bellia llega a indicadores; sesión, permisos, filtros y duplicados'
     assert.equal(full.summary.targetMet, 0);
     assert.equal(full.summary.productivity, 255 / 26);
     assert.equal(full.defects.total, 40);
-    assert.deepEqual(full.defects.warnings, []);
     const filtered = await dashboard(request, viewer, `${query}&table=Mesa%202`);
     assert.equal(filtered.summary.inspected, 55);
     assert.equal(filtered.summary.required, 150);
@@ -198,22 +197,21 @@ test('Excel inválido no guarda jornadas parciales y devuelve un error de fila',
   });
 });
 
-test('avisa diferencias del detalle y admite cargas sin esa hoja', async () => {
+test('acepta cargas con y sin hoja Detalle', async () => {
   await withServer(async ({ request, login }) => {
     const admin = await login('admin@test.local');
     const query = 'from=2026-11-01&to=2026-11-30';
-    const warning = await upload(request, admin, await workbook(exampleRecords(), exampleDetails().slice(1)));
-    assert.equal(warning.status, 201);
-    assert.deepEqual((await warning.json()).warningDates, ['2026-11-18']);
+    const partial = await upload(request, admin, await workbook(exampleRecords(), exampleDetails().slice(1)));
+    assert.equal(partial.status, 201);
+    assert.deepEqual(await partial.json(), { recordCount: 3, detailCount: 2 });
     const withoutDetails = exampleRecords().map(row => ({ ...row, date: '2026-11-20' }));
     const added = await upload(request, admin, await workbook(withoutDetails, null));
     assert.equal(added.status, 400); // Mesa 1 aparece dos veces en la fecha nueva.
     const unique = withoutDetails.slice(0, 2);
     const optional = await upload(request, admin, await workbook(unique, null));
     assert.equal(optional.status, 201);
-    assert.deepEqual((await optional.json()).warningDates, []);
+    assert.deepEqual(await optional.json(), { recordCount: 2, detailCount: 0 });
     const result = await dashboard(request, admin, query);
-    assert.deepEqual(result.defects.warnings, ['2026-11-18']);
     assert.equal(result.defects.total, 20);
     assert.equal(result.records.length, 5);
   });

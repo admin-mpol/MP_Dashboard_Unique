@@ -13,7 +13,7 @@ const user = { id: 'admin', email: 'admin@test.local', name: 'Admin', passwordHa
 const batch = (records, details = exampleDetails(), detailProvided = true) => ({ records, details, detailProvided, uploadedBy: user.id, sourceName: 'control.xlsx' });
 
 test('totales, sets, meta y productividad por mesa son calculables a mano', () => {
-  const records = exampleRecords().map(row => ({ ...row, detailProvided: 1 }));
+  const records = exampleRecords();
   const result = buildDashboard(records, exampleDetails());
   assert.equal(result.summary.inspected, 255);
   assert.equal(result.summary.required, 500);
@@ -23,7 +23,6 @@ test('totales, sets, meta y productividad por mesa son calculables a mano', () =
   assert.equal(result.summary.productivity, 255 / 26);
   assert.equal(result.defects.origin, 30);
   assert.equal(result.defects.nonOrigin, 10);
-  assert.deepEqual(result.defects.warnings, []);
   assert.equal(result.records.filter(row => row.table === 'Mesa 1' && row.targetMet).length, 0);
   const filtered = buildDashboard(records, exampleDetails(), { table: 'Mesa 2' });
   assert.equal(filtered.summary.inspected, 55);
@@ -51,13 +50,6 @@ test('la meta es 50 cajas por operario y el porcentaje puede superar 100', () =>
   const last = buildDashboard(records.slice(-1));
   assert.equal(last.summary.required, 200);
   assert.ok(Math.abs(last.summary.attainmentRate - 100.5) < 1e-9);
-});
-
-test('diferencia de sets advierte; ausencia de Detalle no advierte', () => {
-  const records = exampleRecords().map(row => ({ ...row, detailProvided: 1 }));
-  const incomplete = exampleDetails().slice(1);
-  assert.deepEqual(buildDashboard(records, incomplete).defects.warnings, ['2026-11-18']);
-  assert.deepEqual(buildDashboard(records.map(row => ({ ...row, detailProvided: 0 })), []).defects.warnings, []);
 });
 
 test('valida datos y duplicados de ambas hojas', () => {

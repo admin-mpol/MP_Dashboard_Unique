@@ -45,15 +45,6 @@ export function buildDashboard(allRecords, allDetails = [], { table = '' } = {})
     nonOrigin: sum(details, 'nonOrigin'),
   };
   defectTotals.total = defectTotals.origin + defectTotals.nonOrigin;
-  const detailDates = new Set(allRecords.map(row => row.date));
-  const warnings = [...detailDates].filter(date => {
-    const dayRows = allRecords.filter(row => row.date === date);
-    if (!dayRows.every(row => row.detailProvided)) return false;
-    const expected = sum(dayRows, 'blocked') * SETS_PER_BOX;
-    const actual = details.filter(row => row.date === date)
-      .reduce((total, row) => total + row.origin + row.nonOrigin, 0);
-    return expected !== actual;
-  }).sort();
   return {
     summary, daily,
     records: [...records].sort((a, b) => b.date.localeCompare(a.date) || a.table.localeCompare(b.table))
@@ -73,7 +64,7 @@ export function buildDashboard(allRecords, allDetails = [], { table = '' } = {})
         group: field === NON_ORIGIN_FIELD ? 'No origen' : 'Origen',
         sets: sum(details, field.key),
       })),
-      records: details, warnings,
+      records: details,
     },
     options: { tables: [...new Set(allRecords.map(row => row.table))].sort() },
   };

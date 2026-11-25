@@ -451,9 +451,8 @@ function UploadPage({ onSuccess }) {
         body: file
       });
       onSuccess({
-        text: `${data.recordCount} jornadas de mesa y ${data.detailCount} filas de detalle cargadas correctamente.`
-          + (data.warningDates.length ? ` Advertencia: el detalle no coincide con las cajas bloqueadas × 2 en ${data.warningDates.join(', ')}.` : ''),
-        warning: data.warningDates.length > 0,
+        text: `${data.recordCount} jornadas de mesa y ${data.detailCount} filas de detalle cargadas correctamente.`,
+        warning: false,
       });
     } catch (err) {
       setError(err.message);

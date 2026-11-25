@@ -147,10 +147,9 @@ function TargetHero({ inspected, required, percentage, met, total, from, to }) {
   );
 }
 
-function Overview({ summary, daily, records, warnings, from, to }) {
+function Overview({ summary, daily, records, from, to }) {
   return (
     <>
-      {warnings.length > 0 && <Warning dates={warnings} />}
       <TargetHero inspected={summary.inspected} required={summary.required}
         percentage={summary.attainmentRate} met={summary.targetMet} total={summary.workDays}
         from={from} to={to} />
@@ -177,18 +176,6 @@ function Overview({ summary, daily, records, warnings, from, to }) {
   );
 }
 
-function Warning({ dates }) {
-  return (
-    <div className="quality-formula" role="alert">
-      <LockKeyhole size={22} />
-      <div>
-        <strong>Diferencia en sets bloqueados</strong>
-        <p>El detalle no suma las cajas bloqueadas × 2 en: {dates.map(fullDate).join(', ')}. Revisa el Excel de esas fechas.</p>
-      </div>
-    </div>
-  );
-}
-
 function Defects({ defects, table }) {
   return (
     <>
@@ -201,7 +188,6 @@ function Defects({ defects, table }) {
           </div>
         </div>
       )}
-      {defects.warnings.length > 0 && <Warning dates={defects.warnings} />}
       {!defects.records.length ? (
         <Empty text="No se cargó detalle de fallas para estas fechas." />
       ) : (
@@ -264,7 +250,7 @@ export function QualityContent({ page, dashboard, loading, from, to, setFrom, se
     content = (
       <div className="quality-body">
         {page === 'overview' && (
-          <Overview summary={summary} daily={daily} records={records} warnings={defects.warnings}
+          <Overview summary={summary} daily={daily} records={records}
             from={from} to={to} />
         )}
         {page === 'records' && (

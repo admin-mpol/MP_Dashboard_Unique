@@ -155,14 +155,7 @@ export function createApp(repo, { now = () => Date.now() } = {}) {
       const sourceName = String(req.headers['x-file-name'] || 'indicadores.xlsx')
         .replace(/[^a-zA-Z0-9_.-]/g, '_').slice(0, 100);
       await repo.insertQualityBatch({ records, details, detailProvided, uploadedBy: req.user.id, sourceName });
-      const warningDates = detailProvided
-        ? buildDashboard(records.map(row => ({ ...row, detailProvided: 1 })), details).defects.warnings
-        : [];
-      res.status(201).json({
-        recordCount: records.length,
-        detailCount: details.length,
-        warningDates,
-      });
+      res.status(201).json({ recordCount: records.length, detailCount: details.length });
     }));
 
   if (existsSync(resolve('dist'))) app.use(express.static(resolve('dist')));
