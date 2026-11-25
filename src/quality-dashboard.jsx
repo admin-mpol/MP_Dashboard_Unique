@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CalendarDays, ClipboardCheck, CircleCheck, FileSpreadsheet, LockKeyhole, TrendingUp } from 'lucide-react';
 
 const fmt = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 2 });
@@ -101,6 +101,36 @@ function RecordsTable({ records }) {
   );
 }
 
+function AccumulatedChart({ daily }) {
+  let inspected = 0;
+  let required = 0;
+  const data = daily.map(row => {
+    inspected += row.inspected;
+    required += row.required;
+    return {
+      date: row.date,
+      daily: row.attainmentRate,
+      accumulated: required ? inspected / required * 100 : 0,
+    };
+  });
+  return (
+    <div className="quality-chart" role="img" aria-label="Porcentaje de la meta alcanzada por día y de forma acumulada">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data} margin={{ top: 12, right: 12, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="date" tickFormatter={fullDate} />
+          <YAxis tickFormatter={value => `${Math.round(value)}%`} />
+          <Tooltip formatter={value => `${percentFmt.format(value)}%`} labelFormatter={fullDate} />
+          <Legend />
+          <ReferenceLine y={100} stroke="#7a8494" strokeDasharray="6 4" />
+          <Line type="monotone" dataKey="daily" name="Meta del día" stroke="#df9653" strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="accumulated" name="Meta acumulada" stroke="#29936e" strokeWidth={2} dot={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
 function DailyChart({ daily }) {
   return (
     <div className="quality-chart" role="img" aria-label="Cajas aprobadas y bloqueadas por día; valores disponibles en Control diario">
@@ -167,6 +197,9 @@ function Overview({ summary, daily, records, from, to }) {
       </div>
       <Panel title="Inspección diaria" detail="Cajas aprobadas y bloqueadas por fecha">
         <DailyChart daily={daily} />
+      </Panel>
+      <Panel title="Avance de la meta" detail="Porcentaje alcanzado por día y de forma acumulada">
+        <AccumulatedChart daily={daily} />
       </Panel>
       <Panel title="Últimas jornadas"
         detail={`Se muestran ${Math.min(records.length, 5)} de ${records.length}; consulta todas en Control diario.`}>
