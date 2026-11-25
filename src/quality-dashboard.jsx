@@ -6,9 +6,9 @@ const fmt = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 2 });
 const percentFmt = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 const fullDate = date => new Date(`${date}T12:00:00`).toLocaleDateString('es-PE');
 const pages = {
-  overview: ['Resumen general', 'El resultado de cada jornada, en una sola mirada.'],
+  overview: ['Resumen general', 'Resultado de cada jornada.'],
   records: ['Control diario', 'Consolidados por mesa y fecha.'],
-  defects: ['Detalle de fallas', 'Sets bloqueados por tipo de pieza y causa.'],
+  defects: ['Detalle de fallas', 'Detalle por tipo de pieza y causa.'],
 };
 
 function Panel({ title, detail, children }) {
@@ -193,11 +193,11 @@ function Defects({ defects, table }) {
       ) : (
         <>
           <div className="quality-secondary">
-            <div><strong>{fmt.format(defects.origin)}</strong><span>Sets con falla de origen</span></div>
-            <div><strong>{fmt.format(defects.nonOrigin)}</strong><span>Sets con falla no origen</span></div>
-            <div><strong>{fmt.format(defects.total)}</strong><span>Sets bloqueados detallados</span></div>
+            <div><strong>{fmt.format(defects.origin)}</strong><span>Falla de origen</span></div>
+            <div><strong>{fmt.format(defects.nonOrigin)}</strong><span>Falla no origen</span></div>
+            <div><strong>{fmt.format(defects.total)}</strong><span>Total Defectos</span></div>
           </div>
-          <Panel title="Causas de bloqueo" detail="Cada set se registra en una sola categoría">
+          <Panel title="Causas de bloqueo" detail="Cada falla se registra en una sola categoría">
             <div className="classification-grid">
               {defects.categories.map(item => (
                 <article className="classification-card" key={item.key}>
@@ -212,7 +212,7 @@ function Defects({ defects, table }) {
             <div className="table-scroll" role="region" aria-label="Sets bloqueados por fecha y pieza" tabIndex={0}>
               <table>
                 <thead>
-                  <tr><th>FECHA</th><th>PIEZA</th><th>ORIGEN</th><th>NO ORIGEN</th><th>TOTAL SETS</th></tr>
+                  <tr><th>FECHA</th><th>PIEZA</th><th>ORIGEN</th><th>NO ORIGEN</th></tr>
                 </thead>
                 <tbody>
                   {defects.records.map(row => (
@@ -221,7 +221,6 @@ function Defects({ defects, table }) {
                       <td className="strong-cell">{row.piece}</td>
                       <td>{fmt.format(row.origin)}</td>
                       <td>{fmt.format(row.nonOrigin)}</td>
-                      <td className="strong-cell">{fmt.format(row.origin + row.nonOrigin)}</td>
                     </tr>
                   ))}
                 </tbody>
